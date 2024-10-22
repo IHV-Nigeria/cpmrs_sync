@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Beans to add to the current Application context definition -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+  		    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+  		    http://www.springframework.org/schema/context
+  		    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+  		    http://www.springframework.org/schema/jee
+  		    http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+  		    http://www.springframework.org/schema/tx
+  		    http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+  		    http://www.springframework.org/schema/aop
+  		    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+  		    http://www.springframework.org/schema/util
+  		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <context:component-scan base-package="org.openmrs.module.cdrsync" />
+
+    <!-- Wraps CdrsyncService methods in DB transactions and OpenMRS interceptors,
+    which set audit info like dateCreated, changedBy, etc.-->
+    <bean id="cdrsync.CdrsyncService"
+            class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.cdrsync.api.impl.CdrsyncServiceImpl">
+                <property name="dao" ref="cdrsync.CdrsyncDao" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+    <bean id="cdrsync.BiometricInfoDao" class="org.openmrs.module.cdrsync.api.dao.impl.BiometricInfoDaoImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory"/>
+        </property>
+    </bean>
+    <bean id="cdrSync.CdrSyncEncounterDao" class="org.openmrs.module.cdrsync.api.dao.impl.CdrSyncEncounterDaoImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory" />
+        </property>
+    </bean>
+    <bean id="cdrSync.CdrSyncVisitDao" class="org.openmrs.module.cdrsync.api.dao.impl.CdrSyncVisitDaoImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory" />
+        </property>
+    </bean>
+    <bean id="cdrSync.CdrSyncPatientProgramDao" class="org.openmrs.module.cdrsync.api.dao.impl.CdrSyncPatientProgramDaoImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory" />
+        </property>
+    </bean>
+    <bean id="cdrSync.CdrSyncObsDao" class="org.openmrs.module.cdrsync.api.dao.impl.CdrSyncObsDaoImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory" />
+        </property>
+    </bean>
+    <bean id="cdrsync.CdrSyncPatientDao" class="org.openmrs.module.cdrsync.api.dao.impl.CdrSyncPatientDaoImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory"/>
+        </property>
+    </bean>
+    <bean id="cdrSync.CdrSyncAdminDao" class="org.openmrs.module.cdrsync.api.dao.impl.CdrSyncAdminDaoImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory" />
+        </property>
+    </bean>
+    <bean id="cdrsync.BiometricInfoService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.cdrsync.api.impl.BiometricInfoServiceImpl">
+                <property name="dao" ref="cdrsync.BiometricInfoDao" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+    <bean id="cdrsync.CdrSyncEncounterService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.cdrsync.api.impl.CdrSyncEncounterServiceImpl">
+                <property name="dao" ref="cdrSync.CdrSyncEncounterDao" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+    <bean id="cdrsync.CdrSyncVisitService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.cdrsync.api.impl.CdrSyncVisitServiceImpl">
+                <property name="dao" ref="cdrSync.CdrSyncVisitDao" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+    <bean id="cdrsync.CdrSyncPatientProgramService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.cdrsync.api.impl.CdrSyncPatientProgramServiceImpl">
+                <property name="dao" ref="cdrSync.CdrSyncPatientProgramDao" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+    <bean id="cdrsync.CdrSyncObsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.cdrsync.api.impl.CdrSyncObsServiceImpl">
+                <property name="dao" ref="cdrSync.CdrSyncObsDao" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+    <bean id="cdrsync.CdrSyncPatientService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.cdrsync.api.impl.CdrSyncPatientServiceImpl">
+                <property name="dao" ref="cdrsync.CdrSyncPatientDao" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+    <bean id="cdrsync.CdrSyncAdminService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.cdrsync.api.impl.CdrSyncAdminServiceImpl">
+                <property name="dao" ref="cdrSync.CdrSyncAdminDao" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+<!--    <bean id="cdrsync.CdrContainerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--        <property name="transactionManager">-->
+<!--            <ref bean="transactionManager" />-->
+<!--        </property>-->
+<!--        <property name="target">-->
+<!--            <bean class="org.openmrs.module.cdrsync.api.impl.CdrContainerServiceImpl" />-->
+<!--        </property>-->
+<!--        <property name="preInterceptors">-->
+<!--            <ref bean="serviceInterceptors" />-->
+<!--        </property>-->
+<!--        <property name="transactionAttributeSource">-->
+<!--            <ref bean="transactionAttributeSource" />-->
+<!--        </property>-->
+<!--    </bean>-->
+
+    <!-- Adds CdrsyncService to OpenMRS context so it can be accessed
+    calling Context.getService(CdrsyncService.class) -->
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.cdrsync.api.CdrsyncService</value>
+                <ref bean="cdrsync.CdrsyncService" />
+            </list>
+        </property>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.cdrsync.api.BiometricInfoService</value>
+                <ref bean="cdrsync.BiometricInfoService" />
+            </list>
+        </property>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.cdrsync.api.CdrSyncEncounterService</value>
+                <ref bean="cdrsync.CdrSyncEncounterService" />
+            </list>
+        </property>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.cdrsync.api.CdrSyncVisitService</value>
+                <ref bean="cdrsync.CdrSyncVisitService" />
+            </list>
+        </property>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.cdrsync.api.CdrSyncPatientProgramService</value>
+                <ref bean="cdrsync.CdrSyncPatientProgramService" />
+            </list>
+        </property>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.cdrsync.api.CdrSyncObsService</value>
+                <ref bean="cdrsync.CdrSyncObsService" />
+            </list>
+        </property>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.cdrsync.api.CdrSyncPatientService</value>
+                <ref bean="cdrsync.CdrSyncPatientService" />
+            </list>
+        </property>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.cdrsync.api.CdrSyncAdminService</value>
+                <ref bean="cdrsync.CdrSyncAdminService" />
+            </list>
+        </property>
+    </bean>
+<!--    <bean parent="serviceContext">-->
+<!--        <property name="moduleService">-->
+<!--            <list>-->
+<!--                <value>org.openmrs.module.cdrsync.api.CdrContainerService</value>-->
+<!--                <ref bean="cdrsync.CdrContainerService" />-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+</beans>
